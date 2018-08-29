@@ -2,150 +2,147 @@
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var express = require('express');
-var router = express.Router();
 var redis = require('redis');
 var _ = require('lodash');
 var client = redis.createClient(6379, '127.0.0.1');
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-    res.render('index', { title: 'API SERVER' });
-});
+var databaseApi = new function () {
 
-router.get('/test', function (req, res, next) {
-    res.render('layout', { title: 'API SERVER' });
-});
-
-router.post('/user', function (req, res) {
-
-    var key = req.body.name;
-    var value = JSON.stringify(req.body);
-
-    client.get(key, function (err, val) {
-        // err 처리 -> 에러는 아마 404 이런 거 말하는 것 같음
-        // value is null when the key is missing
-        if (_.isNil(val)) {
-            client.set(key, value);
-            // client.set(key, value, (err) => {});
-            res.send('Success: Add User.');
-        } else res.send('Fail: User Already Exists.');
-    });
-});
-
-// params
-router.get('/user/:name', function (req, res) {
-
-    client.get(req.params.name, function (err, val) {
-        // err 처리 -> 에러는 아마 404 이런 거 말하는 것 같음
-        // value is null when the key is missing
-        _.isNil(val) ? res.send('Fail: User Not Found') : res.json(val);
-    });
-});
-
-router.get('/users', function (req, res) {
-
-    client.keys('*', function () {
-        var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(err, keys) {
-            var users, i;
-            return regeneratorRuntime.wrap(function _callee$(_context) {
-                while (1) {
-                    switch (_context.prev = _context.next) {
-                        case 0:
-                            users = {};
-
-                            if (!err) {
-                                _context.next = 3;
-                                break;
-                            }
-
-                            return _context.abrupt('return', console.log(err));
-
-                        case 3:
-                            if (!keys) {
-                                _context.next = 14;
-                                break;
-                            }
-
-                            i = 0;
-
-                        case 5:
-                            if (!(i < keys.length)) {
-                                _context.next = 12;
-                                break;
-                            }
-
-                            _context.next = 8;
-                            return makePromise(keys[i]);
-
-                        case 8:
-                            users['' + keys[i]] = _context.sent;
-
-                        case 9:
-                            i++;
-                            _context.next = 5;
-                            break;
-
-                        case 12:
-                            console.log('users', users);
-                            res.json(users);
-
-                        case 14:
-                        case 'end':
-                            return _context.stop();
-                    }
+    this.searchStudent = function (findingName) {
+        return new Promise(function (resolve, reject) {
+            client.get(findingName, function (err, val) {
+                // value is null when the key is missing
+                if (!_.isNil(val)) {
+                    resolve(val);
+                } else {
+                    reject(err);
                 }
-            }, _callee, this);
-        }));
-
-        return function (_x, _x2) {
-            return _ref.apply(this, arguments);
-        };
-    }());
-});
-
-var makePromise = function makePromise(key) {
-    return new Promise(function (resolve, reject) {
-        client.get(key, function (error, value) {
-            if (error) return console.log(error);
-
-            resolve(value);
+            });
         });
-    });
-};
+    };
 
-// 덮어 쓰기
-router.put('/user', function (req, res) {
+    this.getAllStudents = function () {
+        return new Promise(function (resolve, reject) {
+            client.keys('*', function () {
+                var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(err, keys) {
+                    var _this = this;
 
-    var key = req.body.name;
-    var value = JSON.stringify(req.body);
+                    var usersJson, promises, userArray;
+                    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                        while (1) {
+                            switch (_context2.prev = _context2.next) {
+                                case 0:
+                                    usersJson = {};
 
-    console.log(key);
-    console.log(value);
+                                    if (!err) {
+                                        _context2.next = 3;
+                                        break;
+                                    }
 
-    client.get(key, function (err, val) {
-        if (_.isNil(val)) {
-            res.send('Fail: User Not Found.');
-        } else {
-            client.set(key, value);
-            res.send('Success: Edit User.');
-        }
-    });
-});
+                                    return _context2.abrupt('return', console.log(err));
 
-// 삭제하기
-router.delete('/user/:name', function (req, res) {
+                                case 3:
+                                    if (!keys) {
+                                        _context2.next = 12;
+                                        break;
+                                    }
 
-    var key = req.params.name;
+                                    promises = _.map(keys, function () {
+                                        var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(key) {
+                                            return regeneratorRuntime.wrap(function _callee$(_context) {
+                                                while (1) {
+                                                    switch (_context.prev = _context.next) {
+                                                        case 0:
+                                                            _context.next = 2;
+                                                            return databaseApi.searchStudent(key);
 
-    client.get(key, function (err, val) {
-        if (_.isNil(val)) {
-            res.send('Fail: User Not Found.');
-        } else {
-            client.del(key);
-            res.send('Success: Delete User.');
-        }
-    });
-});
+                                                        case 2:
+                                                            return _context.abrupt('return', _context.sent);
 
-module.exports = router;
+                                                        case 3:
+                                                        case 'end':
+                                                            return _context.stop();
+                                                    }
+                                                }
+                                            }, _callee, _this);
+                                        }));
+
+                                        return function (_x3) {
+                                            return _ref2.apply(this, arguments);
+                                        };
+                                    }());
+                                    _context2.next = 7;
+                                    return Promise.all(promises);
+
+                                case 7:
+                                    userArray = _context2.sent;
+
+
+                                    _.forEach(userArray, function (user) {
+                                        var userJson = JSON.parse(user);
+                                        usersJson[userJson.name] = userJson;
+                                    });
+
+                                    // console.log(usersJson);
+                                    resolve(usersJson);
+                                    _context2.next = 13;
+                                    break;
+
+                                case 12:
+                                    reject(err);
+
+                                case 13:
+                                case 'end':
+                                    return _context2.stop();
+                            }
+                        }
+                    }, _callee2, this);
+                }));
+
+                return function (_x, _x2) {
+                    return _ref.apply(this, arguments);
+                };
+            }());
+        });
+    };
+
+    this.addStudent = function (jsonData) {
+        return new Promise(function (resolve, reject) {
+            var key = jsonData.name;
+            var value = JSON.stringify(jsonData);
+
+            client.get(key, function (err, val) {
+                // value is null when the key is missing
+                if (_.isNil(val)) {
+                    client.set(key, value);
+                    resolve();
+                } else reject(err);
+            });
+        });
+    };
+
+    this.deleteStudent = function (deletingName) {
+        return new Promise(function (resolve, reject) {
+            var key = deletingName;
+
+            client.get(key, function (err, val) {
+                if (!_.isNil(val)) {
+                    client.del(key);
+                    resolve();
+                } else {
+                    reject(err);
+                }
+            });
+        });
+    };
+}();
+
+// async function test() {
+//     console.log('hi');
+//     await databaseApi.getAllStudents();
+// }
+//
+// test();
+
+
+module.exports = databaseApi;

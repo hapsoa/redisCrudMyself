@@ -1,5 +1,9 @@
 const uiManager = new function () {
 
+    const cardArray = [];
+    /**
+     * search add delete edit 버튼
+     */
     const $button = $('.button');
 
     $button.on('click', function () {
@@ -10,55 +14,98 @@ const uiManager = new function () {
         $(`.${id}`).removeClass('display-none');
     });
 
-    // $('.click-button').on('click', function (e) {
-    //   const $this = $(this);
-    //   const inputArray = $this.parent().find('input');
-    //   console.log(makeJson(inputArray));
-    //   // console.log($(inputArray).val());
-    //
-    //
-    // });
+
+    /**
+     * initiation
+     */
+    webApi.getAllStudents().then((data) => {
+        if (data.success) {
+            const students = data.body;
+
+            const keys = Object.keys(students)
+
+            // 모든 학생들을 모두 카드로 만든다.
+            _.forEach(keys, (key) => {
+                cardArray.push(new Card(students[key]));
+            });
+
+        }
+
+    });
+
 
     /**
      * Add
      */
     const $addSubmitButton = $('.add > .click-button');
+    $addSubmitButton.on('click', async function() {
+        const $this = $(this);
+        const $inputs = $this.parent().find('input');
+        const jsonData = makeJson($inputs);
 
-    $addSubmitButton.on('click', function() {
-        const name = $('input[key="name"]').val();
-        const hobby = $('input[key="hobby"]').val();
-        const age = $('input[key="age"]').val();
-        const food = $('input[key="food"]').val();
-        webApi.createStudent(name, hobby, age, food);
-    });
+        const returnedJsonData = await webApi.addStudent(jsonData);
 
-
-    const makeJson = function (array) {
-        const json = {};
-
-        for (let i = 0; i < array.length; i++) {
-            json[$(array[i]).attr('key')] = $(array[i]).val();
+        if(returnedJsonData.success) {
+            cardArray.push(new Card(returnedJsonData.body));
         }
 
+    });
+
+    const makeJson = function ($inputs) {
+        const json = {};
+        for (let i = 0; i < $inputs.length; i++) {
+            const $input = $($inputs[i]);
+            json[$input.attr('key')] = $input.val();
+        }
         return json;
     };
 
+    /**
+     * Delete
+     */
+    const $deleteSubmitButton = $('.delete > .click-button');
+    $deleteSubmitButton.on('click', async function() {
+        const $this = $(this);
+        const $input = $this.parent().find('input');
+        const deletingName = $input.val();
+
+        const returnedJsonData = await webApi.deleteStudent(deletingName);
+
+        if (returnedJsonData.success) {
+            _.remove(cardArray, (card) => {
+                if (card.name === returnedJsonData.name) {
+                    card.remove();
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
+        }
+        $input.val('');
+    });
+
+    /**
+     * Card
+     */
     const Card = function (data) {
-
         const $cardsZone = $('.main-content');
-
-        const template = `<div class="card">
+        const $template = $(`<div class="card">
                 <div class="photo-content"><i class="fas fa-user-circle"></i></div>
                 <div class="profile-content">
-                    <div class="name">이수정</div>
-                    <div class="text age">22</div>
-                    <div class="text hobby">음악감상</div>
-                    <div class="text food">파스타</div>
+                    <div class="name">${data.name}</div>
+                    <div class="text age">${data.age}</div>
+                    <div class="text hobby">${data.hobby}</div>
+                    <div class="text food">${data.food}</div>
                 </div>
-            </div>`;
+            </div>`);
+        $cardsZone.append($template);
 
-        $cardsZone.append(template);
+        this.name = data.name;
 
+        this.remove = () => {
+            $template.remove();
+        }
     };
 
 };

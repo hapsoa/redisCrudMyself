@@ -31,6 +31,7 @@ search, add, delete, edit 를 누르면 작동하는 모듈
 <- webApi ->
 서버에 데이터를 요청하는 모듈
 
+    getAllStudents()
     searchStudent()
     addStudent()
     deleteStudent()
@@ -54,5 +55,11 @@ search, add, delete, edit 를 누르면 작동하는 모듈
     client.get()
     client.del()
     client.set()
+
+    getAllStudents()
+    searchStudent()
+    addStudent()
+    deleteStudent()
+    editStudent()
 
 
