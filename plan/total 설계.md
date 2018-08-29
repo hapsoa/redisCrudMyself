@@ -63,3 +63,7 @@ search, add, delete, edit 를 누르면 작동하는 모듈
     editStudent()
 
 
+
+-- 지금 할 일 --
+
+search, edit만 더 한다.

@@ -33,6 +33,27 @@ const uiManager = new function () {
 
     });
 
+    /**
+     * Search
+     */
+    const $searchSubmitButton = $('.search > .click-button');
+    $searchSubmitButton.on('click', function() {
+        const $this = $(this);
+        const $input = $this.parent().find('input');
+        const searchingName = $input.val();
+
+        // console.log(searchingName);
+
+        _.forEach(cardArray, (card) => {
+            if (card.name === searchingName) {
+
+                card.highlight();
+
+            }
+        });
+
+
+    });
 
     /**
      * Add
@@ -105,7 +126,11 @@ const uiManager = new function () {
 
         this.remove = () => {
             $template.remove();
-        }
+        };
+
+        this.highlight = () => {
+            $template.css('background-color', 'red');
+        };
     };
 
 };

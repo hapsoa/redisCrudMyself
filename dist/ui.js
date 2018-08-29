@@ -35,6 +35,25 @@ var uiManager = new function () {
     });
 
     /**
+     * Search
+     */
+    var $searchSubmitButton = $('.search > .click-button');
+    $searchSubmitButton.on('click', function () {
+        var $this = $(this);
+        var $input = $this.parent().find('input');
+        var searchingName = $input.val();
+
+        // console.log(searchingName);
+
+        _.forEach(cardArray, function (card) {
+            if (card.name === searchingName) {
+
+                card.highlight();
+            }
+        });
+    });
+
+    /**
      * Add
      */
     var $addSubmitButton = $('.add > .click-button');
@@ -127,6 +146,10 @@ var uiManager = new function () {
 
         this.remove = function () {
             $template.remove();
+        };
+
+        this.highlight = function () {
+            $template.css('background-color', 'red');
         };
     };
 }();
