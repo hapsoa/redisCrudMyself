@@ -43,8 +43,6 @@ var uiManager = new function () {
         var $input = $this.parent().find('input');
         var searchingName = $input.val();
 
-        // console.log(searchingName);
-
         _.forEach(cardArray, function (card) {
             if (card.name === searchingName) {
                 card.highlight();
@@ -52,6 +50,8 @@ var uiManager = new function () {
                 card.deHighlight();
             }
         });
+
+        $input.val('');
     });
 
     /**
@@ -141,7 +141,7 @@ var uiManager = new function () {
     var $editSubmitButton = $('.edit > .click-button');
 
     $editSubmitButton.on('click', _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-        var $this, $inputs, jsonData;
+        var $this, $inputs, jsonData, returnedJsonData;
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
             while (1) {
                 switch (_context3.prev = _context3.next) {
@@ -153,6 +153,22 @@ var uiManager = new function () {
                         return webApi.editStudent(jsonData);
 
                     case 5:
+                        returnedJsonData = _context3.sent;
+
+
+                        if (returnedJsonData.success) {
+                            _.forEach(cardArray, function (card) {
+                                if (card.name === returnedJsonData.body.name) {
+                                    card.updateInfo(returnedJsonData.body);
+                                }
+                            });
+                        }
+
+                        $inputs.each(function (index, input) {
+                            $(input).val('');
+                        });
+
+                    case 8:
                     case 'end':
                         return _context3.stop();
                 }
@@ -180,6 +196,13 @@ var uiManager = new function () {
         };
         this.deHighlight = function () {
             return $template.removeAttr('highlighted');
+        };
+
+        this.updateInfo = function (jsonData) {
+            $template.find('.name').text('' + jsonData.name);
+            $template.find('.age').text('' + jsonData.age);
+            $template.find('.hobby').text('' + jsonData.hobby);
+            $template.find('.food').text('' + jsonData.food);
         };
     };
 }();

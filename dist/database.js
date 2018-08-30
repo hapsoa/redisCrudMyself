@@ -139,14 +139,12 @@ var databaseApi = new function () {
     this.editStudent = function (jsonData) {
         return new Promise(function (resolve, reject) {
             var key = jsonData.name;
-            var value = jsonData;
-
-            // console.log(key);
-            // console.log(value);
+            var value = JSON.stringify(jsonData);
 
             client.get(key, function (err, val) {
                 if (!_.isNil(val)) {
                     client.set(key, value);
+                    resolve();
                 } else {
                     reject(err);
                 }

@@ -60,17 +60,17 @@ router.put('/user', async (req, res) => {
 
     console.log(req.body);
 
-    // try {
-    //     await databaseApi.editStudent(req.body);
-    //     res.json({
-    //         success: true,
-    //         body: req.body
-    //     });
-    // } catch (error) {
-    //     res.json({
-    //         success: false
-    //     });
-    // }
+    try {
+        await databaseApi.editStudent(req.body);
+        res.json({
+            success: true,
+            body: req.body
+        });
+    } catch (error) {
+        res.json({
+            success: false
+        });
+    }
 
 });
 

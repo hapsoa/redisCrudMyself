@@ -42,8 +42,6 @@ const uiManager = new function () {
         const $input = $this.parent().find('input');
         const searchingName = $input.val();
 
-        // console.log(searchingName);
-
         _.forEach(cardArray, (card) => {
             if (card.name === searchingName) {
                 card.highlight();
@@ -52,7 +50,7 @@ const uiManager = new function () {
             }
         });
 
-
+        $input.val('');
     });
 
     /**
@@ -116,7 +114,19 @@ const uiManager = new function () {
         const $inputs = $this.parent().find('input');
         const jsonData = makeJson($inputs);
 
-        await webApi.editStudent(jsonData);
+        const returnedJsonData = await webApi.editStudent(jsonData);
+
+        if(returnedJsonData.success) {
+            _.forEach(cardArray, (card) => {
+                if (card.name === returnedJsonData.body.name) {
+                    card.updateInfo(returnedJsonData.body);
+                }
+            });
+        }
+
+        $inputs.each((index, input) => {
+            $(input).val('');
+        });
     });
 
 
@@ -147,6 +157,13 @@ const uiManager = new function () {
             $template.attr('highlighted', '');
         };
         this.deHighlight = () => $template.removeAttr('highlighted');
+
+        this.updateInfo = (jsonData) => {
+            $template.find('.name').text(`${jsonData.name}`);
+            $template.find('.age').text(`${jsonData.age}`);
+            $template.find('.hobby').text(`${jsonData.hobby}`);
+            $template.find('.food').text(`${jsonData.food}`);
+        } ;
 
     };
 

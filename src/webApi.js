@@ -56,9 +56,13 @@ const webApi = new function () {
     this.editStudent = (jsonData) => {
         return new Promise((resolve, reject) => {
 
-            $.put('/user', jsonData, function (data) {
+            // $.put('/user', jsonData, function (data) {
+            //     resolve(data);
+            // }, "json");
+
+            $.put('/user', jsonData, function(data) {
                 resolve(data);
-            }, "json");
+            });
         });
     };
 
