@@ -76,6 +76,8 @@ var uiManager = new function () {
 
                         if (returnedJsonData.success) {
                             cardArray.push(new Card(returnedJsonData.body));
+                        } else {
+                            console.log('이미 존재하는 학생입니다.');
                         }
 
                     case 7:
