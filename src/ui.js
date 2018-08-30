@@ -46,9 +46,9 @@ const uiManager = new function () {
 
         _.forEach(cardArray, (card) => {
             if (card.name === searchingName) {
-
                 card.highlight();
-
+            } else {
+                card.deHighlight();
             }
         });
 
@@ -107,6 +107,20 @@ const uiManager = new function () {
     });
 
     /**
+     * Edit
+     */
+    const $editSubmitButton = $('.edit > .click-button');
+
+    $editSubmitButton.on('click', async function() {
+        const $this = $(this);
+        const $inputs = $this.parent().find('input');
+        const jsonData = makeJson($inputs);
+
+        await webApi.editStudent(jsonData);
+    });
+
+
+    /**
      * Card
      */
     const Card = function (data) {
@@ -129,8 +143,11 @@ const uiManager = new function () {
         };
 
         this.highlight = () => {
-            $template.css('background-color', 'red');
+            // $template.css('background-color', 'red');
+            $template.attr('highlighted', '');
         };
+        this.deHighlight = () => $template.removeAttr('highlighted');
+
     };
 
 };

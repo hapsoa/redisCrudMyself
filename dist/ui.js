@@ -47,8 +47,9 @@ var uiManager = new function () {
 
         _.forEach(cardArray, function (card) {
             if (card.name === searchingName) {
-
                 card.highlight();
+            } else {
+                card.deHighlight();
             }
         });
     });
@@ -135,6 +136,31 @@ var uiManager = new function () {
     })));
 
     /**
+     * Edit
+     */
+    var $editSubmitButton = $('.edit > .click-button');
+
+    $editSubmitButton.on('click', _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        var $this, $inputs, jsonData;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+            while (1) {
+                switch (_context3.prev = _context3.next) {
+                    case 0:
+                        $this = $(this);
+                        $inputs = $this.parent().find('input');
+                        jsonData = makeJson($inputs);
+                        _context3.next = 5;
+                        return webApi.editStudent(jsonData);
+
+                    case 5:
+                    case 'end':
+                        return _context3.stop();
+                }
+            }
+        }, _callee3, this);
+    })));
+
+    /**
      * Card
      */
     var Card = function Card(data) {
@@ -149,7 +175,11 @@ var uiManager = new function () {
         };
 
         this.highlight = function () {
-            $template.css('background-color', 'red');
+            // $template.css('background-color', 'red');
+            $template.attr('highlighted', '');
+        };
+        this.deHighlight = function () {
+            return $template.removeAttr('highlighted');
         };
     };
 }();

@@ -77,7 +77,26 @@ const databaseApi = new function() {
                 }
             });
         });
-    }
+    };
+
+    this.editStudent = (jsonData) => {
+        return new Promise((resolve, reject) => {
+            let key = jsonData.name;
+            let value = jsonData;
+
+            // console.log(key);
+            // console.log(value);
+
+            client.get(key, (err, val) => {
+                if (!_.isNil(val)) {
+                    client.set(key, value);
+                }
+                else {
+                    reject(err);
+                }
+            });
+        });
+    };
 
 };
 

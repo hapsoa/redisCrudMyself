@@ -26,6 +26,7 @@ router.get('/users', async function (req, res) {
 });
 
 router.post('/user', async (req, res) => {
+    console.log('post', req.body);
     try {
         await databaseApi.addStudent(req.body);
         res.json({
@@ -55,5 +56,30 @@ router.delete('/user/:name', async (req, res) => {
     }
 });
 
+router.put('/user', async (req, res) => {
+
+    console.log(req.body);
+
+    // try {
+    //     await databaseApi.editStudent(req.body);
+    //     res.json({
+    //         success: true,
+    //         body: req.body
+    //     });
+    // } catch (error) {
+    //     res.json({
+    //         success: false
+    //     });
+    // }
+
+});
+
 
 module.exports = router;
+
+
+// function test() {
+//
+// }
+//
+// test();

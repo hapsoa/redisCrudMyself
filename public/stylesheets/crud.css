@@ -46,7 +46,9 @@ body {
         font-size: 15px;
         border-bottom: 1px solid #ccc; }
       .main-content .card .profile-content .text {
-        padding: 2px 0px; }
+        padding: 2px 0; }
+    .main-content .card[highlighted] {
+      background-color: red; }
 
 .button-content {
   width: 100%;

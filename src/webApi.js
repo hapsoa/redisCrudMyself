@@ -53,6 +53,20 @@ const webApi = new function () {
         });
     };
 
+    this.editStudent = (jsonData) => {
+        return new Promise((resolve, reject) => {
 
+            $.put('/user', jsonData, function (data) {
+                resolve(data);
+            }, "json");
+        });
+    };
 
 };
+
+
+// function test() {
+//     webApi.editStudent({name: 'good'});
+// }
+//
+// test();

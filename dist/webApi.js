@@ -2,9 +2,7 @@
 
 $.put = function (url, data, callback, type) {
     if ($.isFunction(data)) {
-        type = type || callback;
-        callback = data;
-        data = {};
+        type = type || callback, callback = data, data = {};
     }
     return $.ajax({
         url: url,
@@ -54,4 +52,19 @@ var webApi = new function () {
             }, "json");
         });
     };
+
+    this.editStudent = function (jsonData) {
+        return new Promise(function (resolve, reject) {
+
+            $.put('/user', jsonData, function (data) {
+                resolve(data);
+            }, "json");
+        });
+    };
 }();
+
+// function test() {
+//     webApi.editStudent({name: 'good'});
+// }
+//
+// test();
